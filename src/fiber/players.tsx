@@ -1,5 +1,5 @@
 
-import { useRef } from "react";
+import React, { useRef } from "react";
 import Avatar from "./avatar";
 import { useFrame } from "@react-three/fiber";
 import { Mesh } from "three";
@@ -13,7 +13,7 @@ export function updateLiveData(newData: iPlayers) {
     playersLive = newData;
 }
 
-const Players = ({ players }: { players: string[] }) => {
+const Players = ({ players, userName }: { players: string[], userName: string }) => {
 
     const boxRefs = useRef<{ [s: string]: Mesh | null }>({});
 
@@ -32,34 +32,30 @@ const Players = ({ players }: { players: string[] }) => {
     useFrame(() => {
         // Loop over alle spelers in liveData en update hun positie
         Object.keys(playersLive).forEach((playerKey) => {
-          const player = playersLive[playerKey];
-          const ref = boxRefs.current[playerKey];
-    
-            console.log(player[0])
-            console.log(player[1])
+            const player = playersLive[playerKey];
+            const ref = boxRefs.current[playerKey];
 
+            //console.log(player[0])
+            //console.log(player[1])
+            if (ref) {
+                ref.position.lerp(
+                    { x: player[0] / 1000000, y: 0, z: player[1] / 1000000 },
+                    0.25 // Lerp factor to control the speed of interpolation
+                );
 
-          if (ref) {
-            ref.position.x = player[0]/1000000;
-            ref.position.z = player[1]/1000000;
-          }
+            }
         });
-      });
+    });
 
-
-
-    console.log("test")
-
-    let i = 0;
     return (
         <>
-            {players && Object.entries(players).map(([key, value]) => {
-                i++; return (
-                    <mesh key={value} ref={(ref) => (boxRefs.current[value] = ref)}>
+            {players && Object.entries(players).map(([key, value]) =>
+                <React.Fragment key={value} >
+                    {userName !== value ? <mesh ref={(ref) => (boxRefs.current[value] = ref)}>
                         <Avatar position={[0, 0, 0]}></Avatar>
-                    </mesh>
-                )
-            })}
+                    </mesh> : <></>}
+                </React.Fragment>
+            )}
         </>
     )
 

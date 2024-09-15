@@ -1,11 +1,12 @@
 import { useState } from "react";
 import peerConnection, { startConnection } from "../fiber/RTCPeerConnectionStatic";
 
-function Login({setPlayers, setDataChannel}: {setPlayers: (players: string[]) => void, setDataChannel: (dataChannel: RTCDataChannel) => void}) {
+function Login({setPlayers, setDataChannel, setUserNameState}: {setPlayers: (players: string[]) => void, setDataChannel: (dataChannel: RTCDataChannel) => void, setUserNameState: (userName:string) => void}) {
 
     const [userName, setUserName] = useState('');
 
     function start() {
+        setUserNameState(userName);
         const ws = new WebSocket("ws://192.168.1.186:3001/ws");
         ws.onopen = function () {
             startConnection(userName, setPlayers, setDataChannel);

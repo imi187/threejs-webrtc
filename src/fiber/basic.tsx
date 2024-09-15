@@ -14,11 +14,12 @@ useGLTF.preload('/assets/glb/avatar.glb')
 export default function Basic() {
 
   const [players, setPlayers] = useState<string[]>([])
+  const [userName, setUserName] = useState<string | null>(null)
   const [dataChannel, setDataChannel] = useState<RTCDataChannel | null>(null)
 
   return (
     <>
-      <Login setPlayers={setPlayers} setDataChannel={setDataChannel} />
+      <Login setPlayers={setPlayers} setDataChannel={setDataChannel} setUserNameState={setUserName} />
       <Canvas
         style={{ position: "fixed", zIndex: 100 }}
         linear
@@ -40,7 +41,10 @@ export default function Basic() {
           <Controls dataChannel={dataChannel} />
         }
 
-        <Players players={players} />
+        {userName &&
+          <Players userName={userName} players={players} />
+        }
+        
         <Stats className="stats" />
         {/*<axesHelper />*/}
 
