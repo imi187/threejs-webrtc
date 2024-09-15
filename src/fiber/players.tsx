@@ -56,7 +56,7 @@ const Players = ({ players }: { players: string[] }) => {
             {players && Object.entries(players).map(([key, value]) => {
                 i++; return (
                     <mesh key={value} ref={(ref) => (boxRefs.current[value] = ref)}>
-                        <Avatar position={[i, 0, i]}></Avatar>
+                        <Avatar position={[0, 0, 0]}></Avatar>
                     </mesh>
                 )
             })}
