@@ -12,15 +12,37 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
   const controlsRef = useRef<PointerLockControlsImpl | null>(null);
   const {camera} = useThree()
   const dollyBodyRef = useRef<Mesh>(null);
+  const [isMouseMoving, setIsMouseMoving] = useState(false);
   const [moveForward, setMoveForward] = useState(false);
   const [moveBackward, setMoveBackward] = useState(false);
   const [moveLeft, setMoveLeft] = useState(false);
   const [moveRight, setMoveRight] = useState(false);
+  let movementTimeout: NodeJS.Timeout;
 
   useEffect(() => {
     document.addEventListener("keydown", onKeyDown, false);
     document.addEventListener("keyup", onKeyUp);
+    
   }, []);
+
+  useEffect(() => {
+    const handleMouseMove = () => {
+      setIsMouseMoving(true);
+
+      clearTimeout(movementTimeout);
+      movementTimeout = setTimeout(() => {
+        setIsMouseMoving(false);
+      }, 1); // 1 seconde zonder beweging betekent dat de muis is gestopt
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(movementTimeout);
+    };
+  }, []);
+
 
   const onKeyDown = function (event: any) {
     switch (event.code) {
@@ -77,6 +99,8 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
 
   useFrame((scene, delta) => {
 
+    //console.log(isMouseMoving)
+
     if (controlsRef.current) {
       const velocity = delta *2;
       if (moveForward) {
@@ -91,9 +115,9 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
       if (moveRight) {
         controlsRef.current.moveRight(velocity);
       }
-      if(moveForward || moveLeft || moveBackward || moveRight) {
+      if(moveForward || moveLeft || moveBackward || moveRight || isMouseMoving) {
         if(dataChannel) {
-          dataChannel.send(JSON.stringify([Math.ceil(camera.position.x * 1000000), Math.ceil(camera.position.z * 1000000)]));
+          dataChannel.send(JSON.stringify([Math.ceil(camera.position.x * 1000000), Math.ceil(camera.position.z * 1000000), Math.ceil(camera.rotation.y *1000000)]));
         }
       }
     }
