@@ -1,5 +1,4 @@
-import React, {
-  useContext,
+import {
   useEffect,
   useRef,
   useState,
@@ -7,21 +6,17 @@ import React, {
 import { PointerLockControls } from "@react-three/drei";
 import { PointerLockControls as PointerLockControlsImpl } from "three-stdlib";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Mesh, Raycaster, Vector2 } from "three";
-import dataChannelContext from "./DataChannelContext";
+import { Mesh } from "three";
 
 const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
   const controlsRef = useRef<PointerLockControlsImpl | null>(null);
   const {camera} = useThree()
   const dollyBodyRef = useRef<Mesh>(null);
-  const raycaster = useRef(new Raycaster());
-  const pointer = useRef(new Vector2());
   const [moveForward, setMoveForward] = useState(false);
   const [moveBackward, setMoveBackward] = useState(false);
   const [moveLeft, setMoveLeft] = useState(false);
   const [moveRight, setMoveRight] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  //const dataChannel = useContext(dataChannelContext);
+
   useEffect(() => {
     document.addEventListener("keydown", onKeyDown, false);
     document.addEventListener("keyup", onKeyUp);

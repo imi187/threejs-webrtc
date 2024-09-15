@@ -1,19 +1,19 @@
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Avatar from "./avatar";
 
-const Players = ({ dataChannel, userName }: { dataChannel: RTCDataChannel, userName: string }) => {
+const Players = () => {
 
     const [players, setPlayers] = useState<{ [s: string]: [number, number] }>();
     
-    useEffect(() => {
+    /*useEffect(() => {
         dataChannel.onmessage = function (event) {
             let multiCoordinates = JSON.parse(event.data);
             delete multiCoordinates[userName];
             setPlayers(multiCoordinates)
         };
 
-    }, [dataChannel]);
+    }, [dataChannel]);*/
 
     return (
         <>

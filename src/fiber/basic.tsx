@@ -5,9 +5,10 @@ import { PCFSoftShadowMap, ACESFilmicToneMapping } from "three";
 import { AdaptiveDpr, Stats, useGLTF } from "@react-three/drei";
 import Controls from "./controls";
 import { Sky } from "@react-three/drei";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import peerConnection from "./RTCPeerConnectionStatic";
 import Players from "./players";
+import PlayerContext, { PlayerProvider } from "./PlayersContext";
 
 useGLTF.preload('/assets/glb/avatar.glb')
 
@@ -15,18 +16,35 @@ export default function Basic() {
   const sunSequence = 0.5 * Math.PI;
 
   const [userName, setUserName] = useState('')
-  const [dataChannel, setDataChannel] = useState<RTCDataChannel | null>(null)
+  const [dataChannel, setDataChannel] = useState<RTCDataChannel | null>(null);
 
+  const playerContext = useContext(PlayerContext);
 
   async function startConnection(name: string) {
 
     peerConnection.ondatachannel = function (ev) {
+
       console.log("peerConnection.ondatachannel event fired.");
 
       ev.channel.onmessage = function (event) {
         let multiCoordinates = JSON.parse(event.data);
+        console.log(playerContext)
 
-        console.log(multiCoordinates);
+        if (playerContext) {
+          //const playerContextTemp = [...playerContext.players];
+          const compareArray: string[] = []
+          Object.entries(multiCoordinates).map(([key]) => {
+            compareArray.push(key);
+          })
+
+          console.log(playerContext.players);
+
+        }
+
+
+        //playerContext?.setPlayers();
+
+        //console.log(multiCoordinates);
 
       };
 
@@ -144,13 +162,18 @@ export default function Basic() {
           turbidity={20}
         />
 
-        {dataChannel &&
-          <Controls dataChannel={dataChannel} />
-        }
 
-        {dataChannel &&
-          <Players userName={userName} dataChannel={dataChannel} />
-        }
+        <PlayerProvider>
+          <>
+            {dataChannel &&
+              <Controls dataChannel={dataChannel} />
+            }
+
+            {dataChannel &&
+              <Players />
+            }
+          </>
+        </PlayerProvider>
 
         {/*<axesHelper />*/}
         <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
