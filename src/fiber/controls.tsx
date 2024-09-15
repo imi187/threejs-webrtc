@@ -6,11 +6,12 @@ import {
 import { PointerLockControls } from "@react-three/drei";
 import { PointerLockControls as PointerLockControlsImpl } from "three-stdlib";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Mesh } from "three";
+import { Mesh, Spherical, Vector3 } from "three";
+import { iPlayer } from "./players";
 
-const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
+const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
   const controlsRef = useRef<PointerLockControlsImpl | null>(null);
-  const {camera} = useThree()
+  const { camera } = useThree()
   const dollyBodyRef = useRef<Mesh>(null);
   const [isMouseMoving, setIsMouseMoving] = useState(false);
   const [moveForward, setMoveForward] = useState(false);
@@ -22,7 +23,7 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
   useEffect(() => {
     document.addEventListener("keydown", onKeyDown, false);
     document.addEventListener("keyup", onKeyUp);
-    
+
   }, []);
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
       clearTimeout(movementTimeout);
       movementTimeout = setTimeout(() => {
         setIsMouseMoving(false);
-      }, 1); // 1 seconde zonder beweging betekent dat de muis is gestopt
+      }, 10);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -41,10 +42,25 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
       window.removeEventListener('mousemove', handleMouseMove);
       clearTimeout(movementTimeout);
     };
+
   }, []);
 
 
   const onKeyDown = function (event: any) {
+
+    if (dataChannel) {
+      const direction = new Vector3();
+      camera.getWorldDirection(direction);
+      const spherical = new Spherical();
+      spherical.setFromVector3(direction);
+      const player: iPlayer = {
+        position: [Math.ceil(camera.position.x * 1000000), Math.ceil(camera.position.z * 1000000)],
+        theta: Math.ceil(spherical.theta * 1000000),
+        animation: 6,
+      }
+      dataChannel.send(JSON.stringify(player));
+    }
+
     switch (event.code) {
       case "ArrowUp":
       case "KeyW":
@@ -71,6 +87,20 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
   };
 
   const onKeyUp = function (event: any) {
+
+    if (dataChannel) {
+      const direction = new Vector3();
+      camera.getWorldDirection(direction);
+      const spherical = new Spherical();
+      spherical.setFromVector3(direction);
+      const player: iPlayer = {
+        position: [Math.ceil(camera.position.x * 1000000), Math.ceil(camera.position.z * 1000000)],
+        theta: Math.ceil(spherical.theta * 1000000),
+        animation: 1,
+      }
+      dataChannel.send(JSON.stringify(player));
+    }
+
     switch (event.code) {
       case "z":
       case "KeyW":
@@ -99,10 +129,8 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
 
   useFrame((scene, delta) => {
 
-    //console.log(isMouseMoving)
-
     if (controlsRef.current) {
-      const velocity = delta *2;
+      const velocity = delta * 2;
       if (moveForward) {
         controlsRef.current.moveForward(velocity);
       }
@@ -115,14 +143,23 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
       if (moveRight) {
         controlsRef.current.moveRight(velocity);
       }
-      if(moveForward || moveLeft || moveBackward || moveRight || isMouseMoving) {
-        if(dataChannel) {
-          dataChannel.send(JSON.stringify([Math.ceil(camera.position.x * 1000000), Math.ceil(camera.position.z * 1000000), Math.ceil(camera.rotation.y *1000000)]));
+      if (moveForward || moveLeft || moveBackward || moveRight || isMouseMoving) {
+        if (dataChannel) {
+          const direction = new Vector3();
+          camera.getWorldDirection(direction);
+          const spherical = new Spherical();
+          spherical.setFromVector3(direction);
+          const player: iPlayer = {
+            position: [Math.ceil(camera.position.x * 1000000), Math.ceil(camera.position.z * 1000000)],
+            theta: Math.ceil(spherical.theta * 1000000),
+            animation: (moveForward || moveLeft || moveBackward || moveRight) ? 6: 1,
+          }
+          dataChannel.send(JSON.stringify(player));
         }
       }
     }
 
-    if(dollyBodyRef.current) {
+    if (dollyBodyRef.current) {
       dollyBodyRef.current.position.set(camera.position.x, camera.position.y, camera.position.z);
       dollyBodyRef.current.quaternion.copy(camera.quaternion);
     }
@@ -132,8 +169,8 @@ const Controls = ({dataChannel}: {dataChannel: RTCDataChannel}) => {
   return <>
     <PointerLockControls pointerSpeed={0.15} ref={controlsRef} enabled={true} />
     <mesh ref={dollyBodyRef} >
-      <mesh position={[0,0,-0.25]}>
-        <boxGeometry args={[0.001,0.001,0.001]} />
+      <mesh position={[0, 0, -0.25]}>
+        <boxGeometry args={[0.001, 0.001, 0.001]} />
       </mesh>
     </mesh>
   </>
