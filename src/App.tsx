@@ -1,7 +1,9 @@
-import Basic from "./fiber/basic";
+import Stage from "./fiber/stage";
 
 function App() {
-  return <Basic></Basic>;
+  return <>
+    <Stage></Stage>
+  </>;
 }
 
 export default App;

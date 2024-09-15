@@ -51,7 +51,7 @@ const Players = ({
           <React.Fragment key={value}>
             {userName !== value ? (
               <mesh ref={(ref) => (boxRefs.current[value] = ref)}>
-                <Avatar userName={value} position={[0, 0, 0]}></Avatar>
+                <Avatar userName={value}></Avatar>
               </mesh>
             ) : (
               <></>

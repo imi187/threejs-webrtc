@@ -1,7 +1,7 @@
 import { useState } from "react";
 import peerConnection, {
   startConnection,
-} from "../fiber/RTCPeerConnectionStatic";
+} from "./RTCPeerConnectionStatic";
 
 function Login({
   setPlayers,
@@ -13,7 +13,6 @@ function Login({
   setUserNameState: (userName: string) => void;
 }) {
   const [userName, setUserName] = useState("");
-
   function start() {
     setUserNameState(userName);
     const ws = new WebSocket("ws://192.168.1.186:3001/ws");
@@ -50,9 +49,7 @@ function Login({
         }}
       />
       <button
-        onClick={() => {
-          start();
-        }}
+        onClick={start}
         style={{ backgroundColor: "black", padding: "0 10px" }}
       >
         Start

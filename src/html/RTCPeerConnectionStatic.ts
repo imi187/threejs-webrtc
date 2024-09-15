@@ -1,4 +1,4 @@
-import { playersLive, updateLiveData } from "./players";
+import { playersLive, updateLiveData } from "../fiber/players";
 
 const peerConnection = new RTCPeerConnection({
   iceServers: [
@@ -33,7 +33,6 @@ export async function startConnection(
 ) {
   peerConnection.ondatachannel = function (ev) {
     console.log("peerConnection.ondatachannel event fired.");
-
     setDataChannel(ev.channel);
     ev.channel.onmessage = function (event) {
       const playersData = JSON.parse(event.data);

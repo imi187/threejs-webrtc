@@ -6,10 +6,8 @@ import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { playersLive } from "./players";
 
 const Avatar = ({
-  position,
   userName,
 }: {
-  position: [number, number, number];
   userName: string;
 }) => {
   const avatarRef = useRef<Group>(null);
@@ -51,7 +49,7 @@ const Avatar = ({
   });
 
   return (
-    <group ref={avatarRef} position={position}>
+    <group ref={avatarRef}>
       <primitive object={clonedScene}></primitive>
     </group>
   );

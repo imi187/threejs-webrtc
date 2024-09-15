@@ -11,7 +11,7 @@ import Controls from "./controls";
 
 useGLTF.preload("/assets/glb/avatar.glb");
 
-export default function Basic() {
+export default function Stage() {
   const [players, setPlayers] = useState<string[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
   const [dataChannel, setDataChannel] = useState<RTCDataChannel | null>(null);
