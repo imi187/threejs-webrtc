@@ -25,3 +25,4 @@ export const PlayerProvider = ({ children }: PlayerProviderProps) => {
 };
 
 export default PlayerContext;
+
