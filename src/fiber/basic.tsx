@@ -5,7 +5,7 @@ import { PCFSoftShadowMap, ACESFilmicToneMapping } from "three";
 import { AdaptiveDpr, Stats, useGLTF } from "@react-three/drei";
 import Environment from "./environment";
 import Login from "../html/Login";
-import Players, { iPlayers } from "./players";
+import Players from "./players";
 import { useState } from "react";
 import Controls from "./controls";
 
@@ -26,7 +26,6 @@ export default function Basic() {
         shadows
         camera={{ fov: 50, position: [3, 1.75, 3] }}
         gl={{
-          //powerPreference: "high-performance",
           autoClearColor: true,
           antialias: true,
           alpha: true,

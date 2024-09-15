@@ -31,7 +31,6 @@ function Login({setPlayers, setDataChannel, setUserNameState}: {setPlayers: (pla
         padding: '10px'
     }}>
         <input name='userName' value={userName} style={{ color: 'black' }} onChange={(e) => {
-            e.target.value
             setUserName(e.target.value);
         }} />
         <button

@@ -1,7 +1,7 @@
 
 import { useFrame, useLoader } from '@react-three/fiber'
 import { useEffect, useRef } from 'react';
-import { AnimationAction, AnimationMixer, Group } from 'three';
+import { AnimationMixer, Group } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js'
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { playersLive } from './players';
@@ -25,38 +25,26 @@ const Avatar = ({ position, userName }: { position: [number, number, number], us
         mixer.clipAction(animations[6]).setEffectiveTimeScale(1)
     ]
 
-
-    let currentAction = 1;
+    let currentActionNumber = 1;
     useEffect(() => {
-        actions[currentAction].play();
+        actions[currentActionNumber].play();
     }, [])
 
-
     useFrame((_, delta) => {
-
         if (playersLive[userName]) {
-
-            console.log(playersLive[userName].animation)
-            console.log(currentAction)
-
-            if(actions[currentAction].isRunning() && playersLive[userName].animation !== currentAction) {
-                actions[currentAction].stop();
+            if(actions[currentActionNumber].isRunning() && playersLive[userName].animation !== currentActionNumber) {
+                actions[currentActionNumber].stop();
                 actions[playersLive[userName].animation].play();
-                currentAction = playersLive[userName].animation;
+                currentActionNumber = playersLive[userName].animation;
             }
         }
-
         if (mixer) {
             mixer.update(delta);
         }
     })
 
-    const setAction = () => {
-        //actions[1].play();
-    }
-
     return (
-        <group ref={avatarRef} position={position} onClick={() => setAction()}>
+        <group ref={avatarRef} position={position}>
             <primitive object={clonedScene} ></primitive>
         </group>
     )

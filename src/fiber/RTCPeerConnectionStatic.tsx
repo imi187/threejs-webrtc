@@ -1,7 +1,5 @@
 import { playersLive, updateLiveData } from "./players";
 
-
-
 let peerConnection = new RTCPeerConnection({
     iceServers: [
       {
@@ -25,13 +23,12 @@ let peerConnection = new RTCPeerConnection({
     ]
   });
 
-
   export async function startConnection(name: string, setPlayers: (players: string[]) => void, setDataChannel: (setDataChannel: RTCDataChannel) => void) {
 
     peerConnection.ondatachannel = function (ev) {
         console.log("peerConnection.ondatachannel event fired.");
 
-        setDataChannel(ev.channel)
+        setDataChannel(ev.channel);
         ev.channel.onmessage = function (event) {
 
           const playersData = JSON.parse(event.data);
@@ -49,11 +46,7 @@ let peerConnection = new RTCPeerConnection({
             console.log(tempArray)
             setPlayers(tempArray)
           }
-    
-
-          
-          updateLiveData(playersData)
-            
+          updateLiveData(playersData) 
         };
     
     };
