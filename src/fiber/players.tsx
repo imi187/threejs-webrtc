@@ -36,9 +36,9 @@ const Players = ({
   return (
     <>
       {players &&
-        Object.entries(players).map(([key]) => (
+        Object.entries(players).map(([key, value]) => (
           <mesh key={key} ref={(ref) => (boxRefs.current[key] = ref)}>
-            <Avatar userName={key}></Avatar>
+            <Avatar animation={value.animation} ></Avatar>
           </mesh>
         ))}
     </>

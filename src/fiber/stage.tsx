@@ -13,12 +13,10 @@ useGLTF.preload("/assets/glb/avatar.glb");
 
 export default function Stage() {
   const [userName, setUserName] = useState<string | null>(null);
-  const [dataChannel, setDataChannel] = useState<RTCDataChannel | null>(null);
 
   return (
     <>
       <Login
-        setDataChannel={setDataChannel}
         setUserNameState={setUserName}
       />
       <Canvas
@@ -37,7 +35,7 @@ export default function Stage() {
         }}
       >
         <Environment />
-        {dataChannel && <Controls dataChannel={dataChannel} />}
+        <Controls />
 
         {userName && <Players userName={userName} />}
 

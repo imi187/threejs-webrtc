@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 export interface IPlayer {
     position: [number, number];
@@ -11,13 +11,13 @@ export interface IPlayers {
 }
 
 interface IPlayersStore {
-    players: IPlayers, 
+    players: IPlayers,
     setPlayers: (players: IPlayers) => void
 }
 
 const playersStore = create<IPlayersStore>((set) => ({
     players: {},
-    setPlayers:   (players) => set(() => ({ players: players })),
+    setPlayers: (players) => set(() => ({ players: players })),
 }))
 
 export default playersStore;

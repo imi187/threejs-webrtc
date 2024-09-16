@@ -4,8 +4,11 @@ import { PointerLockControls as PointerLockControlsImpl } from "three-stdlib";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Mesh, Spherical, Vector3 } from "three";
 import { IPlayer } from "../stores/players-stores";
+import DataChannelStore from "../stores/data-channel-store";
 
-const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
+const Controls = () => {
+
+  const { dataChannel } = DataChannelStore()
   const controlsRef = useRef<PointerLockControlsImpl | null>(null);
   const { camera } = useThree();
   const dollyBodyRef = useRef<Mesh>(null);
@@ -37,26 +40,34 @@ const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
       window.removeEventListener("mousemove", handleMouseMove);
       clearTimeout(movementTimeout);
     };
-    
+
   }, []);
 
-  const onKeyDown = function (event: KeyboardEvent) {
-    if (dataChannel) {
-      const direction = new Vector3();
-      camera.getWorldDirection(direction);
-      const spherical = new Spherical();
-      spherical.setFromVector3(direction);
-      const player: IPlayer = {
-        position: [
-          Math.ceil(camera.position.x * 1000000),
-          Math.ceil(camera.position.z * 1000000),
-        ],
-        theta: Math.ceil(spherical.theta * 1000000),
-        animation: 6,
-      };
-      dataChannel.send(JSON.stringify(player));
+  useEffect(() => {
+    
+    if(!moveForward && !moveBackward && !moveLeft && !moveRight) {
+      if (dataChannel) {
+        const direction = new Vector3();
+        camera.getWorldDirection(direction);
+        const spherical = new Spherical();
+        spherical.setFromVector3(direction);
+        const player: IPlayer = {
+          position: [
+            Math.ceil(camera.position.x * 1000000),
+            Math.ceil(camera.position.z * 1000000),
+          ],
+          theta: Math.ceil(spherical.theta * 1000000),
+          animation: 2,
+        };
+        dataChannel.send(JSON.stringify(player));
+      }
     }
 
+
+  }, [moveForward, moveBackward, moveLeft, moveRight]);
+
+  const onKeyDown = function (event: KeyboardEvent) {
+    
     switch (event.code) {
       case "ArrowUp":
       case "KeyW":
@@ -83,24 +94,7 @@ const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
   };
 
   const onKeyUp = function (event: KeyboardEvent) {
-    if (dataChannel) {
-      const direction = new Vector3();
-      camera.getWorldDirection(direction);
-      const spherical = new Spherical();
-      spherical.setFromVector3(direction);
-      type NewType = IPlayer;
-
-      const player: NewType = {
-        position: [
-          Math.ceil(camera.position.x * 1000000),
-          Math.ceil(camera.position.z * 1000000),
-        ],
-        theta: Math.ceil(spherical.theta * 1000000),
-        animation: 1,
-      };
-      dataChannel.send(JSON.stringify(player));
-    }
-
+  
     switch (event.code) {
       case "z":
       case "KeyW":
@@ -126,6 +120,10 @@ const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
         return;
     }
   };
+
+  const sendPosition = () => {
+    
+  }
 
   useFrame((scene, delta) => {
     if (controlsRef.current) {
@@ -161,7 +159,7 @@ const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
             ],
             theta: Math.ceil(spherical.theta * 1000000),
             animation:
-              moveForward || moveLeft || moveBackward || moveRight ? 6 : 1,
+              moveForward || moveLeft || moveBackward || moveRight ? 6 : 2,
           };
           dataChannel.send(JSON.stringify(player));
         }
@@ -183,7 +181,7 @@ const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
       <PointerLockControls
         pointerSpeed={0.15}
         ref={controlsRef}
-        enabled={true}
+        enabled={dataChannel ? true : false}
       />
       <mesh ref={dollyBodyRef}>
         <mesh position={[0, 0, -0.25]}>
