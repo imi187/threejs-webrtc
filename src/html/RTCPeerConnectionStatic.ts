@@ -1,4 +1,4 @@
-import { playersLive, updateLiveData } from "../fiber/players";
+import playersStore, { IPlayers } from "../stores/players-stores";
 
 const peerConnection = new RTCPeerConnection({
   iceServers: [
@@ -28,29 +28,15 @@ const peerConnection = new RTCPeerConnection({
 
 export async function startConnection(
   name: string,
-  setPlayers: (players: string[]) => void,
   setDataChannel: (setDataChannel: RTCDataChannel) => void,
 ) {
   peerConnection.ondatachannel = function (ev) {
+    const { setPlayers } = playersStore();
     console.log("peerConnection.ondatachannel event fired.");
     setDataChannel(ev.channel);
     ev.channel.onmessage = function (event) {
-      const playersData = JSON.parse(event.data);
-
-      let notFound = false;
-      const tempArray: string[] = Object.keys(playersLive);
-      Object.keys(playersData).forEach((playerData: string) => {
-        if (!tempArray.includes(playerData)) {
-          notFound = true;
-          tempArray.push(playerData);
-        }
-      });
-
-      if (notFound) {
-        console.log(tempArray);
-        setPlayers(tempArray);
-      }
-      updateLiveData(playersData);
+      const playersData: IPlayers = JSON.parse(event.data);
+      setPlayers(playersData);
     };
   };
 
@@ -81,4 +67,3 @@ export async function startConnection(
 }
 
 export default peerConnection;
-

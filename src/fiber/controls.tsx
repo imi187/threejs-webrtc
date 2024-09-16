@@ -3,7 +3,7 @@ import { PointerLockControls } from "@react-three/drei";
 import { PointerLockControls as PointerLockControlsImpl } from "three-stdlib";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Mesh, Spherical, Vector3 } from "three";
-import { iPlayer } from "./players";
+import { IPlayer } from "../stores/players-stores";
 
 const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
   const controlsRef = useRef<PointerLockControlsImpl | null>(null);
@@ -37,15 +37,16 @@ const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
       window.removeEventListener("mousemove", handleMouseMove);
       clearTimeout(movementTimeout);
     };
+    
   }, []);
 
-  const onKeyDown = function (event: any) {
+  const onKeyDown = function (event: KeyboardEvent) {
     if (dataChannel) {
       const direction = new Vector3();
       camera.getWorldDirection(direction);
       const spherical = new Spherical();
       spherical.setFromVector3(direction);
-      const player: iPlayer = {
+      const player: IPlayer = {
         position: [
           Math.ceil(camera.position.x * 1000000),
           Math.ceil(camera.position.z * 1000000),
@@ -81,13 +82,15 @@ const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
     }
   };
 
-  const onKeyUp = function (event: any) {
+  const onKeyUp = function (event: KeyboardEvent) {
     if (dataChannel) {
       const direction = new Vector3();
       camera.getWorldDirection(direction);
       const spherical = new Spherical();
       spherical.setFromVector3(direction);
-      const player: iPlayer = {
+      type NewType = IPlayer;
+
+      const player: NewType = {
         position: [
           Math.ceil(camera.position.x * 1000000),
           Math.ceil(camera.position.z * 1000000),
@@ -151,7 +154,7 @@ const Controls = ({ dataChannel }: { dataChannel: RTCDataChannel }) => {
           camera.getWorldDirection(direction);
           const spherical = new Spherical();
           spherical.setFromVector3(direction);
-          const player: iPlayer = {
+          const player: IPlayer = {
             position: [
               Math.ceil(camera.position.x * 1000000),
               Math.ceil(camera.position.z * 1000000),

@@ -12,14 +12,12 @@ import Controls from "./controls";
 useGLTF.preload("/assets/glb/avatar.glb");
 
 export default function Stage() {
-  const [players, setPlayers] = useState<string[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
   const [dataChannel, setDataChannel] = useState<RTCDataChannel | null>(null);
 
   return (
     <>
       <Login
-        setPlayers={setPlayers}
         setDataChannel={setDataChannel}
         setUserNameState={setUserName}
       />
@@ -41,7 +39,7 @@ export default function Stage() {
         <Environment />
         {dataChannel && <Controls dataChannel={dataChannel} />}
 
-        {userName && <Players userName={userName} players={players} />}
+        {userName && <Players userName={userName} />}
 
         <Stats className="stats" />
         {/*<axesHelper />*/}

@@ -1,34 +1,21 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import Avatar from "./avatar";
 import { useFrame } from "@react-three/fiber";
 import { Mesh } from "three";
-
-export interface iPlayer {
-  position: [number, number];
-  theta: number;
-  animation: number;
-}
-
-export interface iPlayers {
-  [s: string]: iPlayer;
-}
-
-export let playersLive: iPlayers = {};
-export function updateLiveData(newData: iPlayers) {
-  playersLive = newData;
-}
+import playersStore from "../stores/players-stores";
 
 const Players = ({
-  players,
   userName,
 }: {
-  players: string[];
   userName: string;
 }) => {
+
+  const { players } = playersStore()
   const boxRefs = useRef<{ [s: string]: Mesh | null }>({});
+
   useFrame(() => {
-    Object.keys(playersLive).forEach((playerKey) => {
-      const player = playersLive[playerKey];
+    Object.keys(players).forEach((playerKey) => {
+      const player = players[playerKey];
       const ref = boxRefs.current[playerKey];
       if (ref) {
         ref.position.lerp(
@@ -44,19 +31,15 @@ const Players = ({
     });
   });
 
+  delete players[userName];
+
   return (
     <>
       {players &&
-        Object.entries(players).map(([_, value]) => (
-          <React.Fragment key={value}>
-            {userName !== value ? (
-              <mesh ref={(ref) => (boxRefs.current[value] = ref)}>
-                <Avatar userName={value}></Avatar>
-              </mesh>
-            ) : (
-              <></>
-            )}
-          </React.Fragment>
+        Object.entries(players).map(([key]) => (
+          <mesh key={key} ref={(ref) => (boxRefs.current[key] = ref)}>
+            <Avatar userName={key}></Avatar>
+          </mesh>
         ))}
     </>
   );

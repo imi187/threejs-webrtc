@@ -3,13 +3,11 @@ import { useEffect, useRef } from "react";
 import { AnimationMixer, Group } from "three";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
-import { playersLive } from "./players";
+import playersStore from "../stores/players-stores";
 
-const Avatar = ({
-  userName,
-}: {
-  userName: string;
-}) => {
+const Avatar = ({ userName }: { userName: string }) => {
+  const { players } = playersStore()
+
   const avatarRef = useRef<Group>(null);
   const { scene, animations } = useLoader(GLTFLoader, "/assets/glb/avatar.glb");
   const clonedScene = clone(scene);
@@ -33,14 +31,14 @@ const Avatar = ({
   }, []);
 
   useFrame((_, delta) => {
-    if (playersLive[userName]) {
+    if (players[userName]) {
       if (
         actions[currentActionNumber].isRunning() &&
-        playersLive[userName].animation !== currentActionNumber
+        players[userName].animation !== currentActionNumber
       ) {
         actions[currentActionNumber].stop();
-        actions[playersLive[userName].animation].play();
-        currentActionNumber = playersLive[userName].animation;
+        actions[players[userName].animation].play();
+        currentActionNumber = players[userName].animation;
       }
     }
     if (mixer) {
@@ -56,4 +54,3 @@ const Avatar = ({
 };
 
 export default Avatar;
-

@@ -4,11 +4,9 @@ import peerConnection, {
 } from "./RTCPeerConnectionStatic";
 
 function Login({
-  setPlayers,
   setDataChannel,
   setUserNameState,
 }: {
-  setPlayers: (players: string[]) => void;
   setDataChannel: (dataChannel: RTCDataChannel) => void;
   setUserNameState: (userName: string) => void;
 }) {
@@ -17,7 +15,7 @@ function Login({
     setUserNameState(userName);
     const ws = new WebSocket("ws://192.168.1.186:3001/ws");
     ws.onopen = function () {
-      startConnection(userName, setPlayers, setDataChannel);
+      startConnection(userName, setDataChannel);
     };
 
     ws.onmessage = function (e) {
