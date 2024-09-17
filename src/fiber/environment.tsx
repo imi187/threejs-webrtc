@@ -7,9 +7,13 @@ function Environment() {
     <>
       <ambientLight color={"#FFFFFF"} />
       <directionalLight
+        shadow-mapSize-width={2048 * 2 }
+        shadow-mapSize-height={2048 * 2}
         intensity={sunSequence * 1.5}
         castShadow
-        position={[-20, 20, -20]}
+        position={[0, 100, -0]}
+        shadow-bias={-0.00001}
+        shadow-normalBias={0.001}
       >
         <orthographicCamera attach="shadow-camera" args={[-10, 10, 10, -10]} />
       </directionalLight>

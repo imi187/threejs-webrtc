@@ -17,6 +17,7 @@ const Controls = () => {
   const [moveLeft, setMoveLeft] = useState(false);
   const [moveRight, setMoveRight] = useState(false);
   let movementTimeout: NodeJS.Timeout;
+  
 
   useEffect(() => {
     document.addEventListener("keydown", onKeyDown, false);
@@ -114,9 +115,9 @@ const Controls = () => {
     }
   };
 
-  useFrame((scene, delta) => {
+  useFrame((_, delta) => {
     if (controlsRef.current) {
-      const velocity = delta * 2;
+      const velocity = delta * 1.8;
       if (moveForward) {
         controlsRef.current.moveForward(velocity);
       }

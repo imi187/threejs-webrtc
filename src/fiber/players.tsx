@@ -19,7 +19,7 @@ const Players = ({ userName }: { userName: string }) => {
             y: 0,
             z: player.position[1] / 1000000,
           },
-          0.25,
+          0.18,
         );
         ref.rotation.y = player.theta / 1000000;
       }

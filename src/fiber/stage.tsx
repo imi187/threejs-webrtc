@@ -41,7 +41,7 @@ export default function Stage() {
         {/*<axesHelper />*/}
 
         <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-          <planeGeometry args={[100, 100]} />
+          <planeGeometry args={[23, 23]} />
           <meshStandardMaterial
             roughness={0}
             metalness={0.5}
