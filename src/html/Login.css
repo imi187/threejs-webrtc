@@ -1,0 +1,16 @@
+.user-name-input-wrapper {
+  position: fixed;
+  z-index: 99999;
+  right: 0;
+  background-color: green;
+  padding: 10px;
+}
+
+.user-name-input-wrapper {
+  color: black;
+}
+
+.user-name-form-btn {
+  background-color: black;
+  padding: 0 10px;
+}

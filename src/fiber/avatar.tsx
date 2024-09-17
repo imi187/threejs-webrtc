@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef } from "react";
 import { AnimationMixer, Group } from "three";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
-import { PositionalAudio } from '@react-three/drei'
-import * as THREE from 'three';
+import { PositionalAudio } from "@react-three/drei";
+import * as THREE from "three";
 
 //https://bigsoundbank.com/search?q=Walking
 //https://freesound.org/
@@ -18,13 +18,13 @@ const Avatar = ({ animation }: { animation: number }) => {
 
   const [clonedScene, actions] = useMemo(() => {
     const clonedScene = clone(scene);
-    clonedScene.traverse((object: any) => {
-
-      object.castShadow = object.isMesh ? true : false
-      object.receiveShadow = object.isMesh ? true : false
-      object.frustumCulled = false
-
-    })
+    clonedScene.traverse((object: THREE.Object3D) => {
+      if (object instanceof THREE.Mesh) {
+        object.castShadow = true;
+        object.receiveShadow = true;
+      }
+      object.frustumCulled = false;
+    });
     const mixer = new AnimationMixer(clonedScene);
     const actions = [
       mixer.clipAction(animations[0]).setEffectiveTimeScale(1),
@@ -66,11 +66,10 @@ const Avatar = ({ animation }: { animation: number }) => {
     }
 
     if (animation === 6) {
-      audioRef.current.play()
+      audioRef.current.play();
     } else {
-      audioRef.current.stop()
+      audioRef.current.stop();
     }
-
   }, [animation, actions]);
 
   useFrame((_, delta) => {

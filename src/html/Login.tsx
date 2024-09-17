@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import startWebRPCConnection from "./RTCPeerConnectionStatic";
 import playersStore, { IPlayers } from "../stores/players-stores";
 import DataChannelStore from "../stores/data-channel-store";
+import "Login.css";
 
 interface IIceCandidate {
   candidate: string;
@@ -57,27 +58,16 @@ function Login({
   }, [peerConnection]);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        zIndex: 99999,
-        right: 0,
-        backgroundColor: "green",
-        padding: "10px",
-      }}
-    >
+    <div className="user-name-input-wrapper">
       <input
         name="userName"
         value={userName}
-        style={{ color: "black" }}
+        className="user-name-input"
         onChange={(e) => {
           setUserName(e.target.value);
         }}
       />
-      <button
-        onClick={start}
-        style={{ backgroundColor: "black", padding: "0 10px" }}
-      >
+      <button onClick={start} className="user-name-form-btn">
         Start
       </button>
     </div>
