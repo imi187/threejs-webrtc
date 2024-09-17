@@ -7,8 +7,7 @@ import { IPlayer } from "../stores/players-stores";
 import DataChannelStore from "../stores/data-channel-store";
 
 const Controls = () => {
-
-  const { dataChannel } = DataChannelStore()
+  const { dataChannel } = DataChannelStore();
   const controlsRef = useRef<PointerLockControlsImpl | null>(null);
   const { camera } = useThree();
   const dollyBodyRef = useRef<Mesh>(null);
@@ -40,12 +39,10 @@ const Controls = () => {
       window.removeEventListener("mousemove", handleMouseMove);
       clearTimeout(movementTimeout);
     };
-
   }, []);
 
   useEffect(() => {
-    
-    if(!moveForward && !moveBackward && !moveLeft && !moveRight) {
+    if (!moveForward && !moveBackward && !moveLeft && !moveRight) {
       if (dataChannel) {
         const direction = new Vector3();
         camera.getWorldDirection(direction);
@@ -62,12 +59,9 @@ const Controls = () => {
         dataChannel.send(JSON.stringify(player));
       }
     }
-
-
-  }, [moveForward, moveBackward, moveLeft, moveRight]);
+  }, [moveForward, moveBackward, moveLeft, moveRight, camera, dataChannel]);
 
   const onKeyDown = function (event: KeyboardEvent) {
-    
     switch (event.code) {
       case "ArrowUp":
       case "KeyW":
@@ -94,7 +88,6 @@ const Controls = () => {
   };
 
   const onKeyUp = function (event: KeyboardEvent) {
-  
     switch (event.code) {
       case "z":
       case "KeyW":
@@ -120,10 +113,6 @@ const Controls = () => {
         return;
     }
   };
-
-  const sendPosition = () => {
-    
-  }
 
   useFrame((scene, delta) => {
     if (controlsRef.current) {

@@ -4,13 +4,8 @@ import { useFrame } from "@react-three/fiber";
 import { Mesh } from "three";
 import playersStore from "../stores/players-stores";
 
-const Players = ({
-  userName,
-}: {
-  userName: string;
-}) => {
-
-  const { players } = playersStore()
+const Players = ({ userName }: { userName: string }) => {
+  const { players } = playersStore();
   const boxRefs = useRef<{ [s: string]: Mesh | null }>({});
 
   useFrame(() => {
@@ -38,7 +33,7 @@ const Players = ({
       {players &&
         Object.entries(players).map(([key, value]) => (
           <mesh key={key} ref={(ref) => (boxRefs.current[key] = ref)}>
-            <Avatar animation={value.animation} ></Avatar>
+            <Avatar animation={value.animation}></Avatar>
           </mesh>
         ))}
     </>
@@ -46,4 +41,3 @@ const Players = ({
 };
 
 export default Players;
-

@@ -2,7 +2,6 @@ export async function startWebRPCConnection(
   peerConnection: RTCPeerConnection,
   name: string,
 ) {
-
   peerConnection.setConfiguration({
     iceServers: [
       {
@@ -27,7 +26,7 @@ export async function startWebRPCConnection(
         urls: "turn:global.turn.twilio.com:443?transport=tcp",
       },
     ],
-  })
+  });
 
   const offerResponse = await fetch("http://192.168.1.186:3001/offer", {
     method: "POST",
@@ -53,7 +52,7 @@ export async function startWebRPCConnection(
       answer: answer,
     }),
   });
-
 }
 
 export default startWebRPCConnection;
+

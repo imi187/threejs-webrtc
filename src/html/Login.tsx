@@ -4,9 +4,9 @@ import playersStore, { IPlayers } from "../stores/players-stores";
 import DataChannelStore from "../stores/data-channel-store";
 
 interface IIceCandidate {
-  candidate: string,
-  sdpMLineIndex: number,
-  sdpMid: string
+  candidate: string;
+  sdpMLineIndex: number;
+  sdpMid: string;
 }
 
 function Login({
@@ -14,17 +14,15 @@ function Login({
 }: {
   setUserNameState: (userName: string) => void;
 }) {
-
   const [userName, setUserName] = useState("");
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
+  const [peerConnection, setPeerConnection] =
+    useState<RTCPeerConnection | null>(null);
   const { setPlayers } = playersStore();
   const { setDataChannel } = DataChannelStore();
 
   function start() {
-
     if (peerConnection) {
       setUserNameState(userName);
-
       const ws = new WebSocket("ws://192.168.1.186:3001/ws");
       ws.onopen = function () {
         startWebRPCConnection(peerConnection, userName);
@@ -32,17 +30,18 @@ function Login({
 
       ws.onmessage = function (e) {
         const json: IIceCandidate = JSON.parse(e.data);
-        console.log('ICECANDIDATES');
         setTimeout(() => {
-          peerConnection.addIceCandidate(new RTCIceCandidate(json)).catch((e) => {
-            console.error(e);
-          });
+          peerConnection
+            .addIceCandidate(new RTCIceCandidate(json))
+            .catch((e) => {
+              console.error(e);
+            });
         }, 1000);
       };
 
       peerConnection.ondatachannel = function (ev) {
         console.log("peerConnection.ondatachannel event fired.");
-        setDataChannel(ev.channel)
+        setDataChannel(ev.channel);
         ev.channel.onmessage = function (event) {
           const playersData: IPlayers = JSON.parse(event.data);
           setPlayers(playersData);
@@ -56,7 +55,7 @@ function Login({
       setPeerConnection(new RTCPeerConnection());
     }
   }, [peerConnection]);
-  
+
   return (
     <div
       style={{
@@ -86,4 +85,3 @@ function Login({
 }
 
 export default Login;
-

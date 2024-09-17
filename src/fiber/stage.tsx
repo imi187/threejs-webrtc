@@ -16,9 +16,7 @@ export default function Stage() {
 
   return (
     <>
-      <Login
-        setUserNameState={setUserName}
-      />
+      <Login setUserNameState={setUserName} />
       <Canvas
         style={{ position: "fixed", zIndex: 100 }}
         linear
@@ -58,3 +56,4 @@ export default function Stage() {
     </>
   );
 }
+

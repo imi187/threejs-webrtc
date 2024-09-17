@@ -5,7 +5,6 @@ import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 const Avatar = ({ animation }: { animation: number }) => {
-
   const avatarRef = useRef<Group>(null);
   const { scene, animations } = useLoader(GLTFLoader, "/assets/glb/avatar.glb");
   const [clonedScene, actions] = useMemo(() => {
@@ -24,7 +23,6 @@ const Avatar = ({ animation }: { animation: number }) => {
     return [clonedScene, actions];
   }, [scene, animations]);
 
-
   useEffect(() => {
     let currentRunning = 0;
     actions.forEach((action, index) => {
@@ -36,25 +34,23 @@ const Avatar = ({ animation }: { animation: number }) => {
     const endAction = actions[animation];
     if (currentRunning !== animation) {
       if (endAction) {
-        endAction.enabled = true
-        endAction.setEffectiveTimeScale(1)
-        endAction.setEffectiveWeight(1)
-        endAction.time = 0
+        endAction.enabled = true;
+        endAction.setEffectiveTimeScale(1);
+        endAction.setEffectiveWeight(1);
+        endAction.time = 0;
         if (startAction) {
-          startAction.crossFadeTo(endAction, 0.2, true)
+          startAction.crossFadeTo(endAction, 0.2, true);
         } else {
-          endAction.fadeIn(0.2)
+          endAction.fadeIn(0.2);
         }
       } else {
-        startAction.fadeOut(0.2)
+        startAction.fadeOut(0.2);
       }
-      endAction.play()
+      endAction.play();
     }
-
   }, [animation, actions]);
 
   useFrame((_, delta) => {
-
     if (actions[animation] && actions[animation].getMixer()) {
       actions[animation].getMixer().update(delta);
     }
