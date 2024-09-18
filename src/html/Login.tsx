@@ -46,6 +46,7 @@ function Login({
         setDataChannel(ev.channel);
         ev.channel.onmessage = function (event) {
           const playersData: IPlayers = JSON.parse(event.data);
+          delete playersData[userName];
           setPlayers(playersData);
         };
       };

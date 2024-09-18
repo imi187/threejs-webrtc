@@ -1,14 +1,14 @@
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import Avatar from "./avatar";
 import { useFrame } from "@react-three/fiber";
 import { Mesh } from "three";
 import playersStore from "../stores/players-stores";
 
-const Players = ({ userName }: { userName: string }) => {
+const Players = () => {
   const { players } = playersStore();
-  const boxRefs = useRef<{ [s: string]: Mesh | null }>({});
+  //const boxRefs = useRef<{ [s: string]: Mesh | null }>({});
 
-  useFrame(() => {
+  /*useFrame(() => {
     Object.keys(players).forEach((playerKey) => {
       const player = players[playerKey];
       const ref = boxRefs.current[playerKey];
@@ -24,17 +24,17 @@ const Players = ({ userName }: { userName: string }) => {
         ref.rotation.y = player.theta / 1000000;
       }
     });
-  });
-
-  delete players[userName];
+  });*/
 
   return (
     <>
       {players &&
         Object.entries(players).map(([key, value]) => (
-          <mesh key={key} ref={(ref) => (boxRefs.current[key] = ref)}>
-            <Avatar animation={value.animation}></Avatar>
-          </mesh>
+          <Suspense fallback={null} key={key}>
+            <mesh key={key} >
+              <Avatar player={value} animation={value.animation}></Avatar>
+            </mesh>
+          </Suspense>
         ))}
     </>
   );

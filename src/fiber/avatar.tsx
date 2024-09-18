@@ -5,16 +5,30 @@ import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { PositionalAudio } from "@react-three/drei";
 import * as THREE from "three";
+import { useCylinder } from "@react-three/cannon";
+import { IPlayer } from "../stores/players-stores";
 
 //https://bigsoundbank.com/search?q=Walking
 //https://freesound.org/
 //https://www.mediamusiccomposer.com/blog/10-best-places-to-download-free-royalty-free-game-sound-effects
 
-const Avatar = ({ animation }: { animation: number }) => {
+const Avatar = ({ player, animation }: { player: IPlayer, animation: number }) => {
+  const boxRefs = useRef<THREE.Mesh>(null);
   const avatarRef = useRef<Group>(null);
   const { scene, animations } = useLoader(GLTFLoader, "/assets/glb/avatar.glb");
 
   const audioRef = useRef<THREE.PositionalAudio>(null!);
+
+  const [boundingBoxRef, api] = useCylinder<THREE.Mesh>(() => ({
+    mass: 65,
+    position: [0, 0.3, 0],
+    fixedRotation: true,
+    linearFactor: [0, 1, 0],
+    args:[0.1, 0.1, 1, 32]
+  }));
+
+  const posBoundingBox = useRef([0, 0, 0])
+
 
   const [clonedScene, actions] = useMemo(() => {
     const clonedScene = clone(scene);
@@ -40,6 +54,14 @@ const Avatar = ({ animation }: { animation: number }) => {
   }, [scene, animations]);
 
   useEffect(() => {
+
+    api.position.subscribe(v => posBoundingBox.current = v);
+
+    api.material.set({
+      friction: 10,
+      restitution: 0,
+    });
+
     let currentRunning = 0;
     actions.forEach((action, index) => {
       if (action.isRunning()) {
@@ -72,25 +94,51 @@ const Avatar = ({ animation }: { animation: number }) => {
     }
   }, [animation, actions]);
 
+
+  useEffect(() => {
+    api.position.set(player.position[0] / 1000000, posBoundingBox.current[1], player.position[1] / 1000000);
+  }, [player])
+
   useFrame((_, delta) => {
+
+    if (boxRefs.current) {
+      boxRefs.current.position.lerp(
+        {
+          x: player.position[0] / 1000000,
+          y: posBoundingBox.current[1] -0.5,
+          z: player.position[1] / 1000000,
+        },
+        0.18,
+      );
+      boxRefs.current.rotation.y = player.theta / 1000000;
+
+    }
+
     if (actions[animation] && actions[animation].getMixer()) {
       actions[animation].getMixer().update(delta);
     }
   });
 
   return (
-    <group ref={avatarRef} castShadow>
-      <primitive object={clonedScene}></primitive>
-      <PositionalAudio
-        ref={audioRef}
-        url="/assets/sounds/walking_cement_path_soft_shoe.wav"
-        distance={5}
-        autoplay={true}
-        isPlaying={false}
-        loop
-        playbackRate={1.1}
-      />
-    </group>
+    <>
+      <mesh ref={boxRefs}>
+        <group ref={avatarRef} castShadow>
+          <primitive object={clonedScene}></primitive>
+          <PositionalAudio
+            ref={audioRef}
+            url="/assets/sounds/walking_cement_path_soft_shoe.wav"
+            distance={5}
+            autoplay={true}
+            isPlaying={false}
+            loop
+            playbackRate={1.1}
+          />
+        </group>
+      </mesh>
+      <mesh ref={boundingBoxRef} visible={false}>
+        <cylinderGeometry args={[0.1, 0.1, 1, 32]} />
+      </mesh>
+    </>
   );
 };
 
