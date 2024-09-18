@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import startWebRPCConnection from "./RTCPeerConnectionStatic";
 import playersStore, { IPlayers } from "../stores/players-stores";
 import DataChannelStore from "../stores/data-channel-store";
-import "Login.css";
+import "./Login.css";
 
 interface IIceCandidate {
   candidate: string;
@@ -22,6 +22,7 @@ function Login({
   const { setDataChannel } = DataChannelStore();
 
   function start() {
+    
     if (peerConnection) {
       setUserNameState(userName);
       const ws = new WebSocket("ws://192.168.1.186:3001/ws");

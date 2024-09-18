@@ -27,13 +27,13 @@ const Avatar = ({ animation }: { animation: number }) => {
     });
     const mixer = new AnimationMixer(clonedScene);
     const actions = [
-      mixer.clipAction(animations[0]).setEffectiveTimeScale(1),
-      mixer.clipAction(animations[1]).setEffectiveTimeScale(1),
-      mixer.clipAction(animations[2]).setEffectiveTimeScale(1),
-      mixer.clipAction(animations[3]).setEffectiveTimeScale(1),
-      mixer.clipAction(animations[4]).setEffectiveTimeScale(1),
-      mixer.clipAction(animations[5]).setEffectiveTimeScale(1),
-      mixer.clipAction(animations[6]).setEffectiveTimeScale(1),
+      mixer.clipAction(animations[0]),
+      mixer.clipAction(animations[1]),
+      mixer.clipAction(animations[2]),
+      mixer.clipAction(animations[3]),
+      mixer.clipAction(animations[4]),
+      mixer.clipAction(animations[5]),
+      mixer.clipAction(animations[6]),
     ];
 
     return [clonedScene, actions];
