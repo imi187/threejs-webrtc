@@ -28,8 +28,6 @@ const Avatar = ({ player, animation }: { player: IPlayer, animation: number }) =
   }));
 
   const posBoundingBox = useRef([0, 0, 0])
-
-
   const [clonedScene, actions] = useMemo(() => {
     const clonedScene = clone(scene);
     clonedScene.traverse((object: THREE.Object3D) => {
@@ -49,7 +47,6 @@ const Avatar = ({ player, animation }: { player: IPlayer, animation: number }) =
       mixer.clipAction(animations[5]),
       mixer.clipAction(animations[6]),
     ];
-
     return [clonedScene, actions];
   }, [scene, animations]);
 
@@ -111,12 +108,11 @@ const Avatar = ({ player, animation }: { player: IPlayer, animation: number }) =
         0.18,
       );
       boxRefs.current.rotation.y = player.theta / 1000000;
-
     }
-
     if (actions[animation] && actions[animation].getMixer()) {
       actions[animation].getMixer().update(delta);
     }
+    
   });
 
   return (

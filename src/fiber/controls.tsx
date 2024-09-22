@@ -140,8 +140,6 @@ const Controls = () => {
 
   useFrame((_, delta) => {
 
-
-
     if (controlsRef.current) {
       const velocity = delta * 1.8;
       if (moveForward) {
@@ -230,9 +228,8 @@ const Controls = () => {
           <boxGeometry args={[0.001, 0.001, 0.001]} />
         </mesh>
       </mesh>
-
       <mesh ref={boundingBoxRef}>
-      <cylinderGeometry args={[0.1, 0.1, 1, 32]} />
+        <cylinderGeometry args={[0.1, 0.1, 1, 32]} />
       </mesh>
     </>
   );

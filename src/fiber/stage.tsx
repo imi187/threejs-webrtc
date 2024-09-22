@@ -9,23 +9,16 @@ import Players from "./players";
 import { Suspense, useEffect, useState } from "react";
 import Controls from "./controls";
 import { useBox, Physics } from '@react-three/cannon';
-import Avatar from "./avatar";
-
 
 useGLTF.preload("/assets/glb/avatar.glb");
 
 function Ramp() {
-  const [ref, api] = useBox<Mesh>(() => ({
+  const [ref] = useBox<Mesh>(() => ({
     mass: 0,
-    position: [3, 0, 3], // Plaats waar de ramp komt te staan
-    rotation: [-Math.PI / 6, 0, 0], // Hoek van de helling (hier 30 graden)
-    args: [5, 0.2, 10], // Dimensies van de ramp
+    position: [3, 0, 3],
+    rotation: [-Math.PI / 6, 0, 0],
+    args: [5, 0.2, 10],
   }));
-
-  useEffect(() => {
-
-  }, [api]);
-
 
   return (
     <mesh castShadow receiveShadow ref={ref} position={[3, 0, 3]}>
@@ -44,8 +37,8 @@ const Ground = () => {
 
   useEffect(() => {
     api.material.set({
-      friction: 0, // Wrijving instellen
-      restitution: 0.5, // Terugkaatsing instellen voor dit specifieke object
+      friction: 0,
+      restitution: 0.5,
     });
   }, [api]);
 
@@ -70,7 +63,6 @@ export default function Stage() {
 
   return (
     <>
-
       <Login setUserNameState={setUserName} />
       {userName &&
         <Canvas
@@ -89,11 +81,8 @@ export default function Stage() {
           }}
         >
           <Environment />
-
-
           <Stats className="stats" />
           {/*<axesHelper />*/}
-
           <Suspense fallback={null}>
             <Physics
               iterations={100}
@@ -112,4 +101,3 @@ export default function Stage() {
     </>
   );
 }
-
