@@ -38,7 +38,7 @@ const Ground = () => {
   useEffect(() => {
     api.material.set({
       friction: 0,
-      restitution: 0.5,
+      restitution: 0,
     });
   }, [api]);
 
@@ -53,6 +53,23 @@ const Ground = () => {
         emissive={"#000000"}
         color={"#049ef4"}
       />
+    </mesh>
+  );
+};
+
+
+const Wall = () => {
+  const [ref] = useBox<Mesh>(() => ({
+    mass: 0,
+    position: [-5, 0, -5],
+    rotation: [0, 0, 0],
+    args: [1, 3, 10],
+  }));
+
+  return (
+    <mesh castShadow receiveShadow ref={ref} position={[-5, 0, -5]}>
+      <boxGeometry args={[1, 3, 10]} />
+      <meshStandardMaterial color="green" />
     </mesh>
   );
 };
@@ -93,6 +110,8 @@ export default function Stage() {
               <Players />
               <Ramp />
               <Ground />
+
+              <Wall />
             </Physics>
           </Suspense>
           <AdaptiveDpr pixelated />

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { PointerLockControls } from "@react-three/drei";
 import { PointerLockControls as PointerLockControlsImpl } from "three-stdlib";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Mesh, Spherical, Vector3 } from "three";
+import { Mesh, Raycaster, Spherical, Vector3 } from "three";
 import { IPlayer } from "../stores/players-stores";
 import DataChannelStore from "../stores/data-channel-store";
 import { useCylinder } from "@react-three/cannon";
@@ -18,6 +18,12 @@ const Controls = () => {
   const [moveLeft, setMoveLeft] = useState(false);
   const [moveRight, setMoveRight] = useState(false);
   let movementTimeout: NodeJS.Timeout;
+
+  const raycaster = new Raycaster(); // Raycaster om naar beneden te stralen
+
+  const direction = new Vector3(0, -1, 0); // Richting naar beneden
+
+
 
   const dollyBodyRe2f = useRef<Mesh>(null);
   const [boundingBoxRef, api] = useCylinder<Mesh>(() => ({
@@ -138,7 +144,14 @@ const Controls = () => {
     }
   };
 
-  useFrame((_, delta) => {
+  useFrame((scene, delta) => {
+
+    if(controlsRef.current) {
+      const avatarPosition = controlsRef.current.camera.position;
+      raycaster.set(avatarPosition, direction);
+      const intersects = raycaster.intersectObjects(scene.scene.children, true); // scene.children bevat je hellingen en muren
+     // console.log(intersects)
+    }
 
     if (controlsRef.current) {
       const velocity = delta * 1.8;

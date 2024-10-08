@@ -55,8 +55,8 @@ const Avatar = ({ player, animation }: { player: IPlayer, animation: number }) =
     api.position.subscribe(v => posBoundingBox.current = v);
 
     api.material.set({
-      friction: 10,
-      restitution: 0,
+      friction: 0,
+      restitution: 1,
     });
 
     let currentRunning = 0;
@@ -109,6 +109,7 @@ const Avatar = ({ player, animation }: { player: IPlayer, animation: number }) =
       );
       boxRefs.current.rotation.y = player.theta / 1000000;
     }
+    
     if (actions[animation] && actions[animation].getMixer()) {
       actions[animation].getMixer().update(delta);
     }
@@ -117,7 +118,7 @@ const Avatar = ({ player, animation }: { player: IPlayer, animation: number }) =
 
   return (
     <>
-      <mesh ref={boxRefs}>
+      <mesh ref={boxRefs} visible={true}>
         <group ref={avatarRef} castShadow>
           <primitive object={clonedScene}></primitive>
           <PositionalAudio
