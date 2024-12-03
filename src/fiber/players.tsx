@@ -9,7 +9,7 @@ const Players = () => {
       {players &&
         Object.entries(players).map(([key, value]) => (
           <Suspense fallback={null} key={key}>
-            <mesh key={key} >
+            <mesh key={key}>
               <Avatar player={value} animation={value.animation}></Avatar>
             </mesh>
           </Suspense>

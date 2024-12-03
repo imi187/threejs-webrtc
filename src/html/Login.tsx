@@ -22,23 +22,37 @@ function Login({
   const { setDataChannel } = DataChannelStore();
 
   function start() {
-    
+
     if (peerConnection) {
       setUserNameState(userName);
       const ws = new WebSocket("ws://192.168.1.186:3001/ws");
       ws.onopen = function () {
-        startWebRPCConnection(peerConnection, userName);
+        startWebRPCConnection(peerConnection, userName, ws);
       };
 
       ws.onmessage = function (e) {
-        const json: IIceCandidate = JSON.parse(e.data);
-        setTimeout(() => {
-          peerConnection
-            .addIceCandidate(new RTCIceCandidate(json))
-            .catch((e) => {
-              console.error(e);
-            });
-        }, 1000);
+
+        const json: { action: string, data: any } = JSON.parse(e.data);
+
+        if (json.action === 'offer') {
+          sendAnswer(json.data, ws)
+        }
+
+
+        if (json.action === 'candidate') {
+
+          const jsonData = JSON.parse(e.data)
+
+          const jsonCandidate: IIceCandidate = jsonData.data;
+          setTimeout(() => {
+            peerConnection
+              .addIceCandidate(new RTCIceCandidate(jsonCandidate))
+              .catch((e) => {
+                console.error(e);
+              });
+          }, 1000);
+        }
+
       };
 
       peerConnection.ondatachannel = function (ev) {
@@ -50,6 +64,15 @@ function Login({
           setPlayers(playersData);
         };
       };
+    }
+  }
+
+  async function sendAnswer(data: any, ws: WebSocket) {
+    if (peerConnection) {
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      ws.send(JSON.stringify({ action: 'answer', data: answer, channelId:  userName}))
     }
   }
 

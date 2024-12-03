@@ -1,6 +1,9 @@
+import { channel } from "diagnostics_channel";
+
 export async function startWebRPCConnection(
   peerConnection: RTCPeerConnection,
   name: string,
+  ws: WebSocket
 ) {
   peerConnection.setConfiguration({
     iceServers: [
@@ -27,31 +30,7 @@ export async function startWebRPCConnection(
       },
     ],
   });
-
-  const offerResponse = await fetch("http://192.168.1.186:3001/offer", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ channelId: name }),
-  });
-
-  const offer = await offerResponse.json();
-  await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-
-  const answer = await peerConnection.createAnswer();
-  await peerConnection.setLocalDescription(answer);
-
-  await fetch("http://192.168.1.186:3001/answer", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      channelId: name,
-      answer: answer,
-    }),
-  });
+  ws.send(JSON.stringify({ action: 'offer', channelId: name, data: {type: '', sdp: ''} }));
 }
 
 export default startWebRPCConnection;
